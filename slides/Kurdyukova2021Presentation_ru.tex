@@ -1,0 +1,248 @@
+\documentclass{beamer}
+\beamertemplatenavigationsymbolsempty
+\usecolortheme{beaver}
+\setbeamertemplate{blocks}[rounded=true, shadow=true]
+\setbeamertemplate{footline}[page number]
+\setbeamercolor{itemize item}{fg=red}
+\setbeamercolor{enumerate item}{fg=red}
+% \usepackage{jmlda}
+
+%
+\usepackage[utf8]{inputenc}
+\usepackage[english,russian]{babel}
+\usepackage{amssymb,amsfonts,amsmath,mathtext}
+\usepackage{subfig}
+\usepackage[all]{xy} % xy package for diagrams
+\usepackage{array}
+\usepackage{multicol}% many columns in slide
+\usepackage{hyperref}% urls
+\usepackage{hhline}%tables
+% Your figures are here:
+% \usepackage{graphicx}
+% \usepackage{epstopdf}
+\usepackage{epsfig}
+\graphicspath{ {fig/} {../fig/} }
+
+\newcommand{\diag}{\mathop{\mathrm{diag}}}
+
+%----------------------------------------------------------------------------------------------------------
+\title[\hbox to 56mm{Определение фазы}]{Определение фазы движения человека\\по сигналам носимых устройств}
+\author[А.\,Д. Курдюкова]{Курдюкова Антонина Дмитриевна}
+\institute{Московский физико-технический институт}
+\date{\footnotesize
+\par\smallskip\emph{Курс:} Автоматизация научных исследований\par (практика, В.\,В.~Стрижов)/Группа 874
+\par\smallskip\emph{Эксперт:} В.\,В.~Стрижов
+\par\smallskip\emph{Консультанты:} Г.\,В.~Кормаков, Д.\,М.~Тихонов
+\par\bigskip\small 2021}
+%----------------------------------------------------------------------------------------------------------
+\def\vec#1{\mathchoice{\mbox{\boldmath$\displaystyle#1$}}
+{\mbox{\boldmath$\textstyle#1$}} {\mbox{\boldmath$\scriptstyle#1$}} {\mbox{\boldmath$\scriptscriptstyle#1$}}}
+\begin{document}
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}
+\thispagestyle{empty}
+\maketitle
+\end{frame}
+%-----------------------------------------------------------------------------------------------------
+\begin{frame}{Обнаружение фазы}
+
+\begin{alertblock}{Задача}
+Построение модели, определяющей фазу точек исходного временного ряда.
+\end{alertblock}
+
+\begin{alertblock}{Проблема}
+Нахождение фазы квазипериодического временного ряда.
+\end{alertblock}
+
+\begin{alertblock}{Решение}
+Переход в фазовое пространство уменьшенной размерности, в котором аппроксимация фазовой траектории не имеет самопересечений. Восстановление фазы по точкам полученной траектории. 
+\end{alertblock}
+
+\end{frame}
+%-----------------------------------------------------------------------------------------------------
+\begin{frame}{Временной ряд и его фазовая траектория}
+\begin{itemize}
+\item[\textbullet] $\{ s_i \}_{i = 1}^N$\; временной ряд\\
+
+\item[\textbullet] $\mbox{\bfseries H} = \begin{bmatrix} \mbox{\bfseries s}_1 & \dots & \mbox{\bfseries s}_{m} \end{bmatrix} ,\;m = N - n + 1$\;  траекторная матрица\\
+
+\item[\textbullet] $\mbox{\bfseries s}_k\in\mathbb{R}^n$\; образуют фазовую траекторию\\
+% \item[\textbullet] Траекторное пространство $\mathbb{H}\subseteq \mathbb{R}^n$, натянуто на вектора $\mbox{\bfseries x}_k$\\
+
+\item[\textbullet] $\mbox{\bfseries X} = \mbox{\bfseries H} \mbox{\bfseries W} = \begin{bmatrix} \mbox{\bfseries x}_1 & \dots & \mbox{\bfseries x}_{m} \end{bmatrix} ^{\mathsf{T}}$\; понижение размерности (PCA) 
+\item[\textbullet] $\mbox{\bfseries x}_k\in\mathbb{R}^p$\; фазовая траектория в пространстве меньшей размерности
+\end{itemize}
+%\vfil
+\hfil\hfil\includegraphics[width=5cm]{ts_slide}
+\hfil\hfil\includegraphics[width=5.5cm]{st2}
+\newline
+%\bigskip
+%Важное {\color{red}сообщение}. 
+\end{frame}
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}{Смежные работы в изучаемой области}
+    \begin{enumerate}
+	\item Motrenko A., Strijov V. Extracting fundamental periods to segment biomedical signals //IEEE journal of biomedical and health informatics, 2015.
+	\item Ignatov A. D., Strijov V. V. Human activity recognition using quasiperiodic time series collected from a single tri-axial accelerometer //Multimedia tools and applications, 2016.
+	\item Grabovoy A. V., Strijov V. V. Quasi-Periodic Time Series Clustering for Human Activity Recognition //Lobachevskii Journal of Mathematics, 2020.
+% 	\item 
+%   Usmanova K. R., Zhuravev Yu. I., Rudakov K. V.,  Strijov V. V. Approximation of quasiperiodic signal phase trajectory using directional regression //Computational Mathematics and Cybernetics, 2020.
+
+
+\end{enumerate}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------
+
+\begin{frame}{Понижение размерности фазового пространства}
+\begin{itemize}
+    \item[\textbullet] Траекторная матрица
+        \[ \mbox{\bfseries H} = \begin{bmatrix}
+                        s_1 & \dots & s_n \\
+                        s_2 & \dots & s_{k+1} \\
+                        \hdotsfor{3} \\
+                        s_{N- n+ 1} & \dots & s_{N}
+                        \end{bmatrix}^{\mathsf{T}}\]
+        
+    \item[\textbullet] Сингулярное разложение матрицы $\mbox{\bfseries H}$
+        \[ \frac{1}{n}\mbox{\bfseries H}^{\mathsf{T}}\mbox{\bfseries H} = \mbox{\bfseries V}\mbox{\bfseries \Lambda}\mbox{\bfseries V}^{\mathsf{T}}, \quad \mbox{ \bfseries \Lambda} = \diag(\lambda_1,\dots,\lambda_{n}) \]
+        
+    \item[\textbullet] Выбранные главные компоненты $\mbox{\bfseries y}_1, \dots, \mbox{\bfseries y}_p$, где \[\mbox{\bfseries y}_k = \mbox{\bfseries H}\mbox{\bfseries v}_k, \; k\in \overline{1, n}\]
+    
+    \item[\textbullet] Восстановленная часть траекторной матрицы $\mbox{\bfseries H}$
+        \[ \widehat{\mbox{\bfseries H}} = \mbox{\bfseries H}_1  + \dots + \mbox{\bfseries H}_p, \quad \mbox{\bfseries H}_j = \sqrt{\lambda_j}\mbox{\bfseries v}_j\mbox{\bfseries y}_j^{\mathsf{T}}, \; j\in \overlin{1, p}.\]
+        
+    \item[\textbullet] Понижение размерности $\mbox{\bfseries X} = \widehat{\mbox{\bfseries H}} \mbox{\bfseries W} = \begin{bmatrix} \mbox{\bfseries x}_1 & \dots & \mbox{\bfseries x}_{m} \end{bmatrix} ^{\mathsf{T}} $
+\end{itemize}
+
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}{Аппроксимация фазовой траектории}
+
+\begin{itemize}
+    \item[\textbullet] Модель $g: \varphi \rightarrow \mbox{\bfseries x}$ ставит в соответствие фазе $\varphi \in [0, 2\pi)$ точку средней траектории $\mathsf{E}(\mbox{\bfseries x}|\varphi)$ и значение дисперсии $\Variance(\mbox{\bfseries x}|\varphi)$, где $\mbox{\bfseries x}\in\vec{X}$ -- точка фазового пространства. 
+    \item[\textbullet] Регрессия Надарая-Ватсона 
+
+    \[ \mathsf{E}(\vec{x}|\varphi) =\frac{\sum\limits_{\vec{x}_k\in X}\vec{x}_kK\left(\frac{\rho(\varphi_k', \varphi)}{h}\right)}{\sum\limits_{\vec{x}_k\in X}K\left(\frac{\rho(\varphi_k', \varphi)}{h}\right)}, где \]
+    где $\varphi_i'$ -- фаза, назначенная точке $\vec{x}_i$ с предположением о периоде $T$:\: $\varphi_i' = \frac{2\pi}{T}\cdot i\mod 2\pi, \; i\in\overline{1, m}. $ 
+    
+    % \Variance(\mbox{\bfseries x}|\varphi) = \frac{\sum\limits_{\vec{x}_i\in X}(\vec{x}_i - \mathsf{E}(\vec{x}_i|\varphi))^2K\left(\frac{\rho(\varphi', \varphi)}{h}\right)}{\sum\limits_{\vec{x}_i\in X}K\left(\frac{\rho(\varphi', \varphi)}{h}\right)}
+    
+    \item[\textbullet] Введена метрика
+    \[ \rho(\varphi', \varphi) =
+    \frac{1 - \cos(\varphi' - \varphi)}{2}, \quad \varphi',\, \varphi \in [0, 2\pi)\]
+\end{itemize}
+
+
+
+\end{frame}
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}{Пространство оптимальной размерности}
+\begin{alertblock}{Оптимальная размерность}
+Размерность находится путем проверки модели фазовой тракетории на наличие самопересечений.
+\end{alertblock}
+\begin{alertblock}{Cамопересечения}
+Точки, близкие в фазовом пространстве, с существенно разными фазами.
+\[
+    \exists\, i,j \in \overline{1, m}:\: \| \vec{x}_i  - \vec{x}_j\|^2 <~\Variance(\mbox{\bfseries x_i}|\varphi) + \Variance(\mbox{\bfseries x_j}|\varphi),
+    \quad \|\vec{\varphi}_i  - \vec{\varphi}_j\|_1> \frac{\pi}{4}.
+\]
+\end{alertblock}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}{Модель определения фазы}
+Точки $\vec{x}_i \rightsquigarrow \vec{x}_j$ соседствуют, если $\| \vec{x}_i  - \vec{x}_j\|_2^2 < \varepsilon$,\\ $\varepsilon$ -- гиперпараметр. 
+
+\begin{alertblock}{Предполложения}
+\begin{enumerate}
+    \item Точке с большим индексом соответствует большая фаза  
+   \[  j > i \;\rightarrow \;\varphi_j > \varphi_i \quad i,\, j \in \overline{1, m}.\]
+    
+    \item Фазы соседствующих точек близки
+    \[ \vec{x}_i \rightsquigarrow \vec{x}_j  \quad \rightarrow \quad  \| \varphi_i - \varphi_j \| < \delta \quad i,\, j \in \overline{1, m}.\]
+\end{enumerate}
+\end{alertblock}
+Искомое значение фазы
+\[\widehat{\varphi}_i = \arg\min_{\varphi_j} L(\varphi_j).\]
+    \[ L(\varphi_j) = \lambda_1\sum_{i<j}\left|\varphi_i - \varphi_j\right|_{\mbox{\mathbf{+}}} + (1 - \lambda_1)\sum_{\| \mathbf{x}_i - \mathbf{x}_j \|<\varepsilon} \rho( \varphi_i , \varphi_j ). \]
+
+% \begin{alertblock}
+% Предположения
+% \end{alertblock}
+% \begin{enumerate}
+%     \item кусь
+% \end{enumerate}
+
+
+
+
+% \begin{figure}[ht]
+%         {\includegraphics[width=0.3\textwidth]{slide_2}}
+%         {\includegraphics[width=0.3\textwidth]{slide_3}}
+%         {\includegraphics[width=0.3\textwidth]{slide_4}}\\
+%         \caption*{Исходный и восстановленный временной ряд в зависимости от количества выбранных компонент $p$}
+%         %\label{fg:mod}
+%     \end{figure}
+% \begin{columns}[c]
+% \column{0.5\textwidth}
+% \begin{figure}[ht]
+%     {\includegraphics[width=0.6\textwidth]{slides_1}}
+% \end{figure}
+% \column{0.5\textwidth}
+%     Зависимость ошибки восстановленного временного ряда от размерности фазового пространства.
+% \end{columns}
+\end{frame}
+%-----------------------------------------------------------------------------------------------------------------
+\begin{frame}{Результаты}
+
+
+\begin{figure}[ht]
+    {\includegraphics[width=0.6\textwidth]{phas_final.png}}
+\end{figure}
+
+Аппроксимация фазовой траектории. Значения фазы для точек фазовой траектории.
+
+% \begin{figure}[ht]
+%     {\includegraphics[width=0.8\textwidth]{newplot}}
+% \end{figure}
+
+\end{frame}
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}{Заключение}
+    \begin{itemize}
+        \item[\textbullet] Предложена модель аппроксимации фазовой траектории  
+        
+        \item[\textbullet] Предложен критерий обнаружения самопересечений средней траектории
+    
+        \item[\textbullet] Разработан алгоритм оценки фазы квазипериодического временного ряда
+        
+        % \item[\textbullet] Проведен вычислительный эксперимент по определению оптимальной размерности фазового пространства
+        
+        % \item[\textbullet] Разработан алгоритм поиска точек временного ряда одинаковой фазы
+        % \item[\textbullet] Проведено исследование качества сегментации в зависимости от размерности фазового пространства
+        
+    \end{itemize}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------
+\end{document} 
+\end{frame}
+%-----------------------------------------------------------------------------------------------------
+
+
+\end{frame}
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}{���������� ������}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}{�������}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}{�������������� �����������}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}{����������}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------
+\end{document} 
